@@ -413,7 +413,19 @@ class Pipe {
   function endGame(){ state.over=true; state.started=false; state.running=false; saveBest(); }
 
   function flap(){
-  // MENU → START GAME
+
+  // allow restart if game over
+  if(state.over){
+    resetGame();
+    state.started = true;
+    playSound('flap');
+    return;
+  }
+
+  // block input only while dying animation
+  if(dying || inputLocked) return;
+
+  // menu start
   if(state.mode === 'menu'){
     state.mode = 'transition';
     menuFade = 1;
@@ -423,15 +435,7 @@ class Pipe {
     return;
   }
 
-  // GAME OVER → RESTART
-  if(state.over){
-    resetGame();
-    state.started = true;
-    playSound('flap');
-    return;
-  }
-
-  // NORMAL FLAP
+  // normal gameplay
   state.bird.flap(state.params.flap);
   playSound('flap');
 }
